@@ -40,18 +40,15 @@ A Python script to create customizable Houdini HDK SOP projects from a template 
 
 ## Usage Instructions
 
-1. **Clone the repository**  
+1. **Clone the repository into your desired project location, or to a local folder of choice.**  
    ```bash
    git clone https://github.com/roah-work/hdk-project-generator.git
    ```
 
-2. **Move the repo to your desired HDK projects folder**  
-   You can place it anywhere on your system, as long as your SOP templates live beside it.
-
-3. **Ensure `SOP_TEMPLATE/` folder is present**  
+2. **Ensure `SOP_TEMPLATE/` folder is present**  
    This folder must exist in the repo and contains the base files to duplicate and rename.
 
-4. **Run the script**  
+3. **Run the script**  
    ```bash
    python hdk_make_project.py -name=YourProjectName [-vs="Visual Studio 17 2022"]
    ```
