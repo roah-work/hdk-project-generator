@@ -16,12 +16,6 @@ A Python script to create customizable Houdini HDK SOP projects from a template 
 
 ---
 
-## Note
-- This is a copy of the SOP_Star default example template provided by SideFx, and hence when compiled by default will retain the SOP_Star parameters and functionality. 
-- Please modify the project files post generation to fit your project needs. 
-
-
-
 ## Requirements
 
 - Python 3.6 or higher
