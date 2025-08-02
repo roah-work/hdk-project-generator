@@ -1,0 +1,42 @@
+#type: node
+#context: sop
+#internal: <TEMPLATE>
+#largeicon: /nodes/sop/SOP_hdk_<TEMPLATE>.png
+
+#tags: shape
+
+= <TEMPLATE> =
+
+""" Builds an n-pointed <TEMPLATE> """
+
+@parameters
+
+Divisions:
+    #channels: /divs
+    Number of points on the <TEMPLATE>
+
+Radius:
+    #channels: /rad
+    The radius of the <TEMPLATE>
+
+NegRadius:
+    #channels: /nradius
+    Allows the radius to be negative.  This may result in bowtie
+    polygons.
+
+Center:
+    #channels: /tx /ty /tz
+    The center of the <TEMPLATE>
+
+Orientation:
+    #channels: /orient
+    The orientation of the <TEMPLATE>
+
+@locals
+PT:
+    current point number
+NPT:
+    number of points in the <TEMPLATE>
+
+@related
+- [Node:sop/circle]

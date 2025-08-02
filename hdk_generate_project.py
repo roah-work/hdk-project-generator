@@ -1,0 +1,66 @@
+import os
+import shutil
+import argparse
+import sys
+import subprocess
+
+# === Parse argument ===
+parser = argparse.ArgumentParser(description="Create HDK SOP node from template")
+parser.add_argument("-name", help="Name to replace TEMPLATE with")
+parser.add_argument("-vs", default="Visual Studio 17 2022", help="Visual Studio generator name for CMake")
+args = parser.parse_args()
+
+# === Enforce required argument ===
+if not args.name:
+    print("ERROR: You must specify -name=<HDK_Name>")
+    sys.exit(1)
+
+HDK_Name = args.name
+vs_generator = args.vs
+template_folder = "SOP_TEMPLATE"
+new_folder = f"SOP_{HDK_Name}"
+
+if not os.path.exists(template_folder):
+    print(f"ERROR: '{template_folder}' does not exist.")
+    sys.exit(1)
+
+# === Copy folder ===
+print(f"Copying '{template_folder}' to '{new_folder}'...")
+shutil.copytree(template_folder, new_folder)
+
+# === Create build folder ===
+build_path = os.path.join(new_folder, "build")
+os.makedirs(build_path, exist_ok=True)
+print(f"Created: {build_path}")
+
+# === Process files ===
+for root, dirs, files in os.walk(new_folder, topdown=False):
+    for filename in files:
+        old_path = os.path.join(root, filename)
+
+        # Replace content in applicable files
+        if filename.endswith(('.txt', '.C', '.h')):
+            with open(old_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            content = content.replace("<TEMPLATE>", HDK_Name)
+            with open(old_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+
+        # Rename files containing TEMPLATE
+        if "TEMPLATE" in filename:
+            new_filename = filename.replace("TEMPLATE", HDK_Name)
+            new_path = os.path.join(root, new_filename)
+            os.rename(old_path, new_path)
+            print(f"Renamed: {filename} -> {new_filename}")
+
+# === Run CMake command ===
+cmake_command = ['cmake', '..', '-G', vs_generator]
+
+print(f"Running CMake command in: {build_path}")
+result = subprocess.run(cmake_command, cwd=build_path, shell=True)
+
+if result.returncode != 0:
+    print("CMake command failed.")
+    sys.exit(1)
+else:
+    print("CMake command completed successfully.")
