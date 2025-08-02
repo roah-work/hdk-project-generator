@@ -12,7 +12,7 @@ A Python script to create customizable Houdini HDK SOP projects from a template 
   - `<TEMPLATE>` → your project name
 - Creates a `build` directory inside the new project folder.
 - Runs `cmake` to generate a Visual Studio solution (or any CMake-compatible generator).
-- Clean CLI interface using `-name` and `-vs` options.
+- CLI interface using `-name` and `-vs` options.
 
 ---
 
