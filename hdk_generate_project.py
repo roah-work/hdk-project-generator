@@ -3,6 +3,7 @@ import shutil
 import argparse
 import sys
 import subprocess
+import xml.etree.ElementTree as ET
 
 # === Parse argument ===
 parser = argparse.ArgumentParser(description="Create HDK SOP node from template")
@@ -68,8 +69,34 @@ cmake_command = ['cmake', '..', '-G', vs_generator]
 print(f"Running CMake command in: {build_path}")
 result = subprocess.run(cmake_command, cwd=build_path, shell=True)
 
+def set_compile_as_cpp(vcxproj_path):
+    ET.register_namespace('', "http://schemas.microsoft.com/developer/msbuild/2003")
+    tree = ET.parse(vcxproj_path)
+    root = tree.getroot()
+    ns = {'ns': "http://schemas.microsoft.com/developer/msbuild/2003"}
+
+    changed = False
+    for clcompile in root.findall('.//ns:ClCompile', ns):
+        compile_as = clcompile.find('ns:CompileAs', ns)
+        if compile_as is None:
+            compile_as = ET.SubElement(clcompile, 'CompileAs')
+            compile_as.text = "CompileAsCpp"
+            changed = True
+        elif compile_as.text != "CompileAsCpp":
+            compile_as.text = "CompileAsCpp"
+            changed = True
+
+    if changed:
+        tree.write(vcxproj_path, encoding='utf-8', xml_declaration=True)
+        print(f"Updated {vcxproj_path} with CompileAsCpp")
+
 if result.returncode != 0:
     print("CMake command failed.")
     sys.exit(1)
 else:
     print("CMake command completed successfully.")
+    # Post-process .vcxproj files
+    for root, dirs, files in os.walk(build_path):
+        for file in files:
+            if file.endswith(".vcxproj"):
+                set_compile_as_cpp(os.path.join(root, file))
