@@ -53,6 +53,15 @@ for root, dirs, files in os.walk(new_folder, topdown=False):
             os.rename(old_path, new_path)
             print(f"Renamed: {filename} -> {new_filename}")
 
+    # Rename folders containing TEMPLATE (only subdirectories)
+    for dirname in dirs:
+        if "TEMPLATE" in dirname:
+            old_dir_path = os.path.join(root, dirname)
+            new_dir_name = dirname.replace("TEMPLATE", HDK_Name)
+            new_dir_path = os.path.join(root, new_dir_name)
+            os.rename(old_dir_path, new_dir_path)
+            print(f"Renamed folder: {dirname} -> {new_dir_name}")
+
 # === Run CMake command ===
 cmake_command = ['cmake', '..', '-G', vs_generator]
 
