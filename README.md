@@ -117,6 +117,41 @@ A Python script to create and manage Houdini HDK SOP projects from a customizabl
 
 ---
 
+## Pre and Post Build Events
+
+This project uses **pre-build** and **post-build** events in the Visual Studio solution to automate managing the Houdini process when building your HDK node.
+
+### What Are These Build Events?
+
+- **Pre-build event**: This runs *before* the build starts. It kills any running Houdini instance associated with the current HDK project to ensure no locked files during build.
+- **Post-build event**: This runs *after* a successful build. It launches Houdini and opens the specific `.hiplc` project file, reloading your newly built HDK node automatically.
+
+### The Scripts Launched
+
+- `hdk_hou_kill.py`: Reads a `.pid` file stored under the project’s `temp/` folder to find and terminate the running Houdini process.
+- `hdk_hou_reload.py`: Launches Houdini with the specified `.hiplc` file and writes the new Houdini process ID to the `.pid` file in `temp/` for tracking.
+
+### How to Modify or Disable These Events
+
+The build events are configured in the Visual Studio `.vcxproj` file under the `<PostBuildEvent>` and `<PreBuildEvent>` sections.
+
+- To **view or edit** the commands manually:
+  1. Open the `.vcxproj` file corresponding to your SOP project.
+  2. Locate the `<PreBuildEvent>` and `<PostBuildEvent>` XML nodes.
+  3. Modify the command text to change the script paths, arguments, or remove the event entirely.
+
+- To **enable or disable** events temporarily in Visual Studio:
+  1. Right-click your project in Solution Explorer, select **Properties**.
+  2. Under **Build Events**, modify or clear the **Pre-build event command line** or **Post-build event command line** fields.
+
+- To **regenerate/restore** these events programmatically using the provided Python script:
+  - Run the `add_build_events` function which injects the appropriate commands based on your project setup.
+
+**Note:** Changing these settings affects the automatic Houdini reload workflow. Ensure your `.pid` file location and `.hiplc` path arguments remain consistent if modifying scripts or commands.
+
+---
+
+
 ## License
 
 MIT License — See `LICENSE`.
